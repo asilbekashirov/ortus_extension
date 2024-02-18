@@ -123,13 +123,15 @@ const normalizeMainLayout = () => {
   const mainContainer = document.querySelector("#portalPageBodyLayout")
   let learningCourses = mainContainer?.lastChild?.firstChild
 
-  mainContainer.innerHTML = ""
+  if (mainContainer) {
+    mainContainer.innerHTML = ""
 
-  const newContainer = document.createElement("div")
-  newContainer.setAttribute("class", "newMainContainer");
-
-  newContainer.appendChild(learningCourses)
-  mainContainer.appendChild(newContainer)
+    const newContainer = document.createElement("div")
+    newContainer.setAttribute("class", "newMainContainer");
+  
+    newContainer.appendChild(learningCourses)
+    mainContainer.appendChild(newContainer)
+  }
 }
 
 (() => {
@@ -160,7 +162,7 @@ const normalizeMainLayout = () => {
       const calendarScrollContent = calendar.querySelector(".fc-scroller.fc-scroller-liquid")
 
       if (subjects && calendarScrollContent) {
-        const foundDay = Array.from(subjects).find(s => new Date(s.innerText.split(/\r?\n/)[0]).getTime() > new Date(todayText).getTime())
+        const foundDay = Array.from(subjects).find(s => new Date(s.innerText.split(/\r?\n/)[0]).getTime() >= new Date(todayText).getTime())
         Array.from(subjects).map(s => s.setAttribute("id", "subject_day_text"))
 
         if (foundDay) {
@@ -175,7 +177,7 @@ const normalizeMainLayout = () => {
           }
         }
 
-        const daysLeft = Array.from(subjects).filter(s => new Date(s.innerText.split(/\r?\n/)[0]).getTime() > new Date(todayText).getTime()).length
+        const daysLeft = Array.from(subjects).filter(s => new Date(s.innerText.split(/\r?\n/)[0]).getTime() >= new Date(todayText).getTime()).length
 
         const extraInfo = document.createElement("div")
         extraInfo.innerText = `${daysLeft + 1} day(s) to go this month (╥﹏╥) (crying)`
