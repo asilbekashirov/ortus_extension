@@ -1,0 +1,80 @@
+body, .up-portlet-content-wrapper {
+    background-color: #e0e0e0 !important;
+}
+.courseItem {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+    font-size: 1.1rem;
+    padding: 0.7rem;
+    border-radius: 0.5rem;
+    transition: 0.1s;
+}
+.courseItem:hover {
+    margin-left: 0.5rem;
+    text-decoration: none;
+    box-shadow: inset 4px 4px 8px #bebebe,
+            inset -4px -4px 8px #ffffff;
+}
+.newPortalPageBar {
+    background: transparent !important;
+    backdrop-filter: blur(10px) !important;
+    font-size: 1rem !important;
+}
+.py {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+.rtu_banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-position: top;
+}
+.newMainContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+.newMainContainer > div {
+    width: 100% !important;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #e0e0e0;
+    box-shadow:  7px 7px 14px #bebebe,
+             -7px -7px 14px #ffffff;
+}
+.newMainContainer > * {
+    background-color: #e0e0e0 !important;
+}
+#extra-info {
+    width: 100%;
+    text-align: center;
+    font-size: 1rem !important;
+    color: black;
+    padding: 10px 15px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+#subject_day_text > th {
+    background: #ccc !important;
+}
+#subject_day_text > th a {
+    color: black !important;
+    font-size: 1rem;
+    font-weight: 600 !important;;
+}
+#portalLogo {
+    position: relative;
+    display: inline-block;
+}
+#portalLogo::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}

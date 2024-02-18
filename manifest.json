@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Ortus helper",
+  "description": "This extension aims to make ugly ORTUS site beautiful again.",
+  "version": "0.1.0",
+  "permissions": ["storage", "tabs", "scripting", "activeTab", "webRequest", "webRequestAuthProvider"],
+  "host_permissions": ["https://*.rtu.lv/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "hello_extensions.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/rtu_banner.jpeg"],
+      "matches": ["https://ortus.rtu.lv/*"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.rtu.lv/*"],
+      "js": ["contentScript.js"],
+      "css": ["styles/ortus.css"],
+      "type": "module"
+    }
+  ]
+}
