@@ -1,3 +1,6 @@
+# NOTE!
+This extension is tested on `Chrome` browser only. On other `Chromium` based browsers it may work with errors. `Firefox` currently is not supported
+
 # Description
 
 ### This extension aims to make ORTUS website more beautiful & easier to interact with. It does not send you data to anyone else & only runs on `https://*.rtu.lv/*` domains. To install this extension follow the instructions below:

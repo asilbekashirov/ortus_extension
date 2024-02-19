@@ -8,7 +8,7 @@
   "action": {
     "default_title": "Ortus extension",
     "default_popup": "popup.html",
-    "default_icon": "icon.png"
+    "default_icon": "assets/icon.png"
   },
   "background": {
     "service_worker": "background.js",
@@ -27,5 +27,11 @@
       "run_at": "document_start",
       "type": "module"
     }
-  ]
+  ],
+  "icons": {
+    "16": "assets/icon16.png",
+    "32": "assets/icon32.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
 }
