@@ -11,19 +11,22 @@ const normalizeSubjectLinks = () => {
       [...openSection.children].map((child) => {
         const link = child.querySelector("a");
 
-        const courseItem = document.createElement("a");
-        courseItem.setAttribute("class", "courseItem");
-        courseItem.href = link.href;
-        courseItem.innerText = link.innerText;
-
-        const courseItemLogo = document.createElement("div");
-        courseItemLogo.innerHTML = subjectIcon;
-
-        courseItem.prepend(courseItemLogo);
-
-        child.remove();
-
-        openSection.appendChild(courseItem);
+        if (link) {
+          const courseItem = document.createElement("a");
+          courseItem.setAttribute("class", "courseItem");
+          courseItem.href = link.href;
+          courseItem.innerText = link.innerText;
+  
+          const courseItemLogo = document.createElement("div");
+          courseItemLogo.innerHTML = subjectIcon;
+  
+          courseItem.prepend(courseItemLogo);
+  
+          child.remove();
+  
+          openSection.appendChild(courseItem);
+        }
+        
       });
     }
   }
@@ -60,8 +63,8 @@ const normalizeNavBar = () => {
 
   if (topBar) {
     setAttributes(topBar, {
-      "class": "newPortalPageBar py"
-    })
+      class: "newPortalPageBar py",
+    });
   }
 };
 
@@ -113,94 +116,138 @@ const replaceBanner = () => {
     bannerContainer.style.backgroundImage = `url(${newBannerLink})`;
     bannerContainer.style.backgroundPosition = "top";
     bannerContainer.style.backgroundSize = "cover";
-    const tabs = tabsParent.querySelector("#portalNavigationTabGroup")
-    tabs.setAttribute("class", "newPortalPageBar")
-    bannerContainer.appendChild(tabs)
+    const tabs = tabsParent.querySelector("#portalNavigationTabGroup");
+    tabs.setAttribute("class", "newPortalPageBar");
+    bannerContainer.appendChild(tabs);
   }
 };
 
 const normalizeMainLayout = () => {
-  const mainContainer = document.querySelector("#portalPageBodyLayout")
-  let learningCourses = mainContainer?.lastChild?.firstChild
+  const mainContainer = document.querySelector("#portalPageBodyLayout");
+  let learningCourses = mainContainer?.lastChild?.firstChild;
 
   if (mainContainer) {
-    mainContainer.innerHTML = ""
+    mainContainer.innerHTML = "";
 
-    const newContainer = document.createElement("div")
+    const newContainer = document.createElement("div");
     newContainer.setAttribute("class", "newMainContainer");
-  
-    newContainer.appendChild(learningCourses)
-    mainContainer.appendChild(newContainer)
+
+    newContainer.appendChild(learningCourses);
+    mainContainer.appendChild(newContainer);
   }
+};
+
+const normalizeSchedule = () => {
+  const calendar = document.querySelector("#calendar");
+  const thisYear = new Date().getFullYear();
+  const todayText =
+    document.querySelector(".week-info-day").innerText.split(",")[1].trim() +
+    `, ${thisYear}`;
+
+  if (calendar && todayText) {
+    const subjects = calendar.querySelectorAll("tr.fc-list-day");
+    const calendarScrollContent = calendar.querySelector(
+      ".fc-scroller.fc-scroller-liquid"
+    );
+
+    if (subjects && calendarScrollContent) {
+      const foundDay = Array.from(subjects).find(
+        (s) =>
+          new Date(s.innerText.split(/\r?\n/)[0]).getTime() >=
+          new Date(todayText).getTime()
+      );
+      Array.from(subjects).map((s) => s.setAttribute("id", "subject_day_text"));
+
+      if (foundDay) {
+        calendarScrollContent.scrollBy({
+          top:
+            foundDay.getBoundingClientRect().top -
+            calendarScrollContent.getBoundingClientRect().top,
+          behavior: "smooth",
+        });
+
+        const textNode = foundDay.querySelector("a.fc-list-day-text");
+        if (textNode) {
+          textNode.innerText = `${textNode.innerText} - Upcoming`;
+        }
+      }
+
+      const daysLeft = Array.from(subjects).filter(
+        (s) =>
+          new Date(s.innerText.split(/\r?\n/)[0]).getTime() >=
+          new Date(todayText).getTime()
+      ).length;
+
+      const extraInfo = document.createElement("div");
+      extraInfo.innerText = `${
+        daysLeft + 1
+      } day(s) to go this month (╥﹏╥) (crying)`;
+      extraInfo.setAttribute("id", "extra-info");
+      calendar.prepend(extraInfo);
+    }
+  }
+};
+
+const handleCredentialsSave = async (params) => {
+  chrome.storage.sync.set({
+    credentials: JSON.stringify(params),
+  });
+};
+
+const injectCSS = () => {
+  const myLoadedCSS = document.querySelector("#custom_styles");
+
+  if (myLoadedCSS) return
+
+  const link = document.createElement("link");
+  link.href = chrome.runtime.getURL("styles/ortus.css");
+  link.id = "custom_styles";
+  link.type = "text/css";
+  link.rel = "stylesheet";
+  document.getElementsByTagName("html")[0].appendChild(link);
+};
+
+const removeCSS = () => {
+  const myLoadedCSS = document.querySelector("#custom_styles");
+
+  if (myLoadedCSS) {
+    myLoadedCSS.remove();
+  }
+};
+
+const handleMainPage = () => {
+  normalizeNavBar();
+  normalizeSubjectLinks();
+  normalizeMainLayout();
+  replaceBanner();
+};
+
+const handlePageRefresh = () => {
+  window.location.reload()
 }
 
-(() => {
-  chrome.runtime.onMessage.addListener((obj, sender, response) => {
-    const { type, value } = obj;
+chrome.runtime.onMessage.addListener((obj, sender, response) => {
+  const { type, value, isActive } = obj;
 
-    if (type === "LOGIN_PAGE") {
-      handleLoginPage();
-    } else if (type === "SAVE_CREDENTIALS") {
-      handleCredentialsSave(value);
-    } else if (type === "MAIN_PAGE") {
-      handleMainPage();
-    } else if (type === "FETCHING_SCHEDULE") {
-      normalizeSchedule()
-      // setTimeout(() => {
-      //   normalizeSchedule()
-      // }, 1000)
-    }
-  });
-
-  const normalizeSchedule = () => {
-    const calendar = document.querySelector("#calendar");
-    const thisYear = new Date().getFullYear()
-    const todayText = document.querySelector(".week-info-day").innerText.split(',')[1].trim() + `, ${thisYear}`
-
-    if (calendar && todayText) {
-      const subjects = calendar.querySelectorAll("tr.fc-list-day")
-      const calendarScrollContent = calendar.querySelector(".fc-scroller.fc-scroller-liquid")
-
-      if (subjects && calendarScrollContent) {
-        const foundDay = Array.from(subjects).find(s => new Date(s.innerText.split(/\r?\n/)[0]).getTime() >= new Date(todayText).getTime())
-        Array.from(subjects).map(s => s.setAttribute("id", "subject_day_text"))
-
-        if (foundDay) {
-          calendarScrollContent.scrollBy({
-            top: foundDay.getBoundingClientRect().top - calendarScrollContent.getBoundingClientRect().top,
-            behavior: 'smooth',
-          })
-          
-          const textNode = foundDay.querySelector("a.fc-list-day-text")
-          if (textNode) {
-            textNode.innerText = `${textNode.innerText} - Upcoming`
-          }
-        }
-
-        const daysLeft = Array.from(subjects).filter(s => new Date(s.innerText.split(/\r?\n/)[0]).getTime() >= new Date(todayText).getTime()).length
-
-        const extraInfo = document.createElement("div")
-        extraInfo.innerText = `${daysLeft + 1} day(s) to go this month (╥﹏╥) (crying)`
-        extraInfo.setAttribute("id", "extra-info")
-        calendar.prepend(extraInfo)
-
-      }
-    }
+  if (isActive === "on") {
+    injectCSS()
+  } else if (isActive === "off") {
+    removeCSS()
   }
 
-  const handleCredentialsSave = async (params) => {
-    chrome.storage.sync.set({
-      credentials: JSON.stringify(params),
-    });
-  };
+  if (type === "REFRESH_PAGE") {
+    handlePageRefresh();
+  }
 
-  const handleMainPage = () => {
-    normalizeNavBar();
-    normalizeSubjectLinks();
-    normalizeMainLayout();
-    replaceBanner();
-  };
-  handleMainPage();
+  if (isActive === "off") return
 
-  handleLoginPage();
-})();
+  if (type === "LOGIN_PAGE") {
+    handleLoginPage();
+  } else if (type === "SAVE_CREDENTIALS") {
+    handleCredentialsSave(value);
+  } else if (type === "MAIN_PAGE") {
+    handleMainPage();
+  } else if (type === "FETCHING_SCHEDULE") {
+    normalizeSchedule();
+  }
+});

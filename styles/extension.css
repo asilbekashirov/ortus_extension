@@ -6,8 +6,11 @@
     border: none;
 }
 #root {
+    width: 100%;
+    height: 100%;
     padding: 1rem;
-    background: transparent;
+    background-color: #e0e0e0;
+    position: relative;
 }
 .credentialsWrapper {
     min-width: 15rem;
@@ -15,12 +18,14 @@
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
+    margin-top: 1rem;
 }
 .input_text {
     width: 100%;
     padding: 0.4rem;
     border-radius: 0.4rem;
-    border: 1px solid red;
+    box-shadow: inset 2px 2px 4px #bebebe,
+            inset -2px -2px 4px #ffffff;
 }
 .btn {
     min-width: 15rem;
@@ -28,10 +33,26 @@
     text-align: center;
     cursor: pointer;
     border-radius: 0.4rem;
+    border: 1px solid #053642;
+    background-color: #9ed3e1;
+    color: #053642;
 }
 #checkboxLabel {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.3rem;
+}
+.extension_status {
+    display: block;
+    width: 100%;
+    font-size: 1rem;
+    text-align: center;
+}
+.footer {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0;
 }

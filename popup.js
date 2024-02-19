@@ -9,16 +9,20 @@ const setCredentialsForm = () => {
   const saveBtn = document.createElement("button");
   const autoSubmit = document.createElement("input");
   const checkboxLabel = document.createElement("label");
+  const title = document.createElement("h2");
 
+  title.textContent = "Ortus credentials:"
   formWrapper.setAttribute("class", "credentialsWrapper")
   saveBtn.setAttribute("class", "btn")
   setAttributes(userName, {
     "id": "userName",
-    "class": "input_text"
+    "class": "input_text",
+    "placeholder": "Username"
   })
   setAttributes(password, {
     "id": "password",
-    "class": "input_text"
+    "class": "input_text",
+    "placeholder": "Password"
   })
   setAttributes(autoSubmit, {
     "id": "autoSubmit",
@@ -32,6 +36,7 @@ const setCredentialsForm = () => {
   saveBtn.innerText = "Save";
   checkboxLabel.innerText = "Auto submit";
 
+  formWrapper.appendChild(title);
   formWrapper.appendChild(userName);
   formWrapper.appendChild(password);
   checkboxLabel.prepend(autoSubmit);
@@ -62,6 +67,36 @@ const saveCredentials = async () => {
   }
 };
 
+const sendReq = (value) => {
+  chrome.runtime.sendMessage(value);
+}
+
+const extensionToggler = () => {
+  const toggler = document.createElement("input")
+  const togglerLabel = document.createElement("label");
+
+  chrome.storage.sync.get(["extension_state"], (data) => {
+    const parsed = data["extension_state"] ? JSON.parse(data["extension_state"]) : "on";
+    toggler.checked = parsed === "on"
+    sendReq({
+      type: "EXTENSION_STATE",
+      value: parsed
+    })
+  });
+
+  togglerLabel.innerText = "Extension enabled: ";
+  togglerLabel.setAttribute("class", "extension_status")
+  toggler.setAttribute("type", "checkbox");
+
+  togglerLabel.addEventListener("change", () => sendReq({
+    type: "EXTENSION_STATE",
+    value: toggler.checked ? "on" : "off"
+  }))
+
+  togglerLabel.appendChild(toggler)
+  root.prepend(togglerLabel)
+}
+
 const fillCredentials = async () => {
   const userName = document.querySelector("#userName");
   const password = document.querySelector("#password");
@@ -75,10 +110,19 @@ const fillCredentials = async () => {
   });
 };
 
+const makeFooter = () => {
+  const p = document.createElement("p");
+  p.innerText = "Made with ಠ_ಠ by RTU student"
+  p.setAttribute("class", "footer")
+  root.appendChild(p)
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   root = document.querySelector("#root");
   root.innerHTML = "";
 
+  extensionToggler()
   setCredentialsForm();
   fillCredentials();
+  makeFooter();
 });

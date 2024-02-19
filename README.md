@@ -16,6 +16,7 @@
 #### After you have downloaded the file:
 - Open `Chrome` browser and click on three dots button on top right corner
 - Select `Extensions` -> `Manage Extensions`
-- Click on `Load unpacked` and select downloaded file
+- Check if `Developer mode` is enabled (top right corner). If not, enable
+- Click on `Load unpacked` (top left corner) and select downloaded file
 
-After you have successfully installed the extension it will automatically work on `ORTUS` website. However if you would like to fill in the login form automatically open [ORTUS](https://ortus.rtu.lv/) site, click on extension icon and fill the form and click `Save` button, then you can refresh the site.
+After you have successfully installed the extension it will automatically work on `ORTUS` website. However if you would like to fill in the login form automatically, open [ORTUS](https://ortus.rtu.lv/) site, click on extension icon and fill the form and click `Save` button, then you can refresh the site.
